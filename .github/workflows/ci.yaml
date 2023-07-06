@@ -1,0 +1,35 @@
+name: "CI"
+on:
+  push:
+    branches:
+      - 'main'
+    tags:
+      - ''
+  pull_request:
+    branches:
+      - '*'
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install minikube
+        run: |
+          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+          sudo dpkg -i minikube_latest_amd64.deb
+
+      - name: Set up minikube
+        run: |
+          minikube start
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+
+      - name: Go Code Test
+        run: |
+          go mod tidy
+          go test ./... -race
