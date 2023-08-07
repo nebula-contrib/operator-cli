@@ -1,1 +1,1 @@
-# operator-cli
+# ngctl
