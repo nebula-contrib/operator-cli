@@ -34,6 +34,7 @@ var RootCmd = &cobra.Command{
 func init() {
 	RootCmd.PersistentFlags().StringVar(&kubeConfig, "kubeconfig", filepath.Join(homedir.HomeDir(), ".kube", "config"), "path of the kubernetes config file")
 	RootCmd.AddCommand(studioCmd())
+	RootCmd.AddCommand(versionCmd())
 	RootCmd.AddCommand(listCmd())
 	RootCmd.AddCommand(useCmd())
 }
