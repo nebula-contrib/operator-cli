@@ -37,6 +37,18 @@ jobs:
         run: |
           minikube start
 
+      - name: Create Nebula Graph Cluster
+        run: |
+          # add helm repo
+          helm repo add nebula-operator https://vesoft-inc.github.io/nebula-operator/charts
+          # install nebula-operator
+          helm install --create-namespace  nebula-operator nebula-operator/nebula-operator --namespace=nebula-operator-system --version=1.4.2
+          # wait for nebula-operator ready
+          kubectl wait --for=condition=available deployment/nebula-operator-controller-manager-deployment --timeout=600s -n nebula-operator-system
+          kubectl apply -f example.yaml
+          # wait for nebula graph cluster ready
+          kubectl wait --for=condition=Ready nebulacluster/nebula --timeout=600s
+
       - name: Go Code Test
         run: |
           go mod tidy

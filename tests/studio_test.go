@@ -15,6 +15,7 @@ package tests
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -68,6 +69,81 @@ func TestStudio(t *testing.T) {
 		err := command.Execute()
 		if err != nil {
 			t.Errorf("run studio command error: %v", err)
+		}
+	})
+}
+
+func TestVersion(t *testing.T) {
+	var command = cmd.RootCmd
+	t.Run("version", func(t *testing.T) {
+		// run version command
+		command.SetArgs([]string{"version"})
+		err := command.Execute()
+		if err != nil {
+			t.Errorf("run version command error: %v", err)
+		}
+	})
+}
+
+func TestUse(t *testing.T) {
+	var command = cmd.RootCmd
+	t.Run("use", func(t *testing.T) {
+		// run use command
+		command.SetArgs([]string{"use", "nebula"})
+		err := command.Execute()
+		if err != nil {
+			t.Errorf("run use command error: %v", err)
+		}
+	})
+}
+
+func TestInfo(t *testing.T) {
+	var command = cmd.RootCmd
+	t.Run("info", func(t *testing.T) {
+		// run info command
+		command.SetArgs([]string{"info"})
+		err := command.Execute()
+		if err != nil {
+			t.Errorf("run info command error: %v", err)
+		}
+	})
+}
+
+func TestList(t *testing.T) {
+	var command = cmd.RootCmd
+	t.Run("list", func(t *testing.T) {
+		// run list command
+		command.SetArgs([]string{"list"})
+		err := command.Execute()
+		if err != nil {
+			t.Errorf("run list command error: %v", err)
+		}
+	})
+}
+
+func TestGet(t *testing.T) {
+	var command = cmd.RootCmd
+	args := []string{"metad", "storaged", "graphd", "volume"}
+	for _, v := range args {
+		t.Run(fmt.Sprintf("get %s", v), func(t *testing.T) {
+			command.SetArgs([]string{"get", v})
+			err := command.Execute()
+			if err != nil {
+				t.Errorf("run get %s command error: %v", v, err)
+			}
+		})
+	}
+
+}
+
+func TestConsole(t *testing.T) {
+	var command = cmd.RootCmd
+	t.Run("console", func(t *testing.T) {
+		// run console command
+		command.SetArgs([]string{"console", "-u", "root", "-p", "nebula"})
+		err := command.Execute()
+		if err != nil {
+			t.Errorf("run console command error: %v", err)
 		}
 	})
 }
