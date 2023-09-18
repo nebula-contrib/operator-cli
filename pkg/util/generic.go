@@ -27,7 +27,7 @@ import (
 
 // Resource is the generic type for kubernetes resource
 type Resource interface {
-	appsv1.Deployment | corev1.Service | corev1.Pod
+	appsv1.Deployment | corev1.Service | corev1.Pod | corev1.ConfigMap
 }
 
 // ResourceInterface is the generic interface for kubernetes resource management
@@ -35,6 +35,7 @@ type ResourceInterface[T Resource] interface {
 	Get(ctx context.Context, name string, opts metav1.GetOptions) (*T, error)
 	Create(ctx context.Context, resource *T, opts metav1.CreateOptions) (*T, error)
 	Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error
+	Update(ctx context.Context, resource *T, opts metav1.UpdateOptions) (*T, error)
 }
 
 type Status int
@@ -95,7 +96,29 @@ func CreateResource[T Resource](ctx context.Context, si ResourceInterface[T], el
 	status := Check(ctx, si, name, label)
 	typ := reflect.TypeOf(elem).Elem().Name()
 	if status == StatusAlready {
+		_, err := si.Update(ctx, elem, metav1.UpdateOptions{})
+		return err
+	}
+	if status == StatusConflicted {
+		log.Printf("Resource %s %s is conflicted\n", typ, name)
+		return ErrConflict
+	}
+	_, err := si.Create(ctx, elem, metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func CreateOrUpdate[T Resource](ctx context.Context, si ResourceInterface[T], elem *T, name, label string) error {
+	status := Check(ctx, si, name, label)
+	typ := reflect.TypeOf(elem).Elem().Name()
+	if status == StatusAlready {
 		log.Printf("Resource %s %s is already created\n", typ, name)
+		_, err := si.Update(ctx, elem, metav1.UpdateOptions{})
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 	if status == StatusConflicted {
