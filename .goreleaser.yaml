@@ -5,11 +5,11 @@ builds:
   - env:
       - CGO_ENABLED=0
     goos:
-      - linux
+       - linux
        - windows
        - darwin
     ldflags:
-      - -s -w -X "github.com/nebula-contrib/ngctl/pkg/version.GitRef={{ .Env.GIT_REF }}" -X "github.com/nebula-contrib/ngctl/pkg/version.GitSha={{ .Env.GIT_SHA }}"
+      - -s -w -X "github.com/nebula-contrib/ngctl/pkg/version.GitRef={{ .Env.GIT_REF }}" -X "github.com/nebula-contrib/ngctl/pkg/version.GitSha={{ .FullCommit }}"
     binary: ngctl
 archives:
   - format: tar.gz
@@ -26,7 +26,6 @@ archives:
       - goos: windows
         format: zip
     files:
-      - ngctl
       - LICENSE
       - README.md
 checksum:
