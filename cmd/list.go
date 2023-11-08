@@ -45,7 +45,7 @@ func listCmd() *cobra.Command {
 }
 
 func listClusters(allNamespaces bool, namespace string) error {
-	client, err := util.NewDynamicClient(kubeConfig)
+	client, _, err := util.NewDynamicClient(kubeConfig, kubeContext)
 	if err != nil {
 		return err
 	}

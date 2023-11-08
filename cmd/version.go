@@ -44,7 +44,7 @@ func versionCmd() *cobra.Command {
 
 func ngctlVersion(namespace string) error {
 	log.Printf("ngctl Version: %s", version.GetVersion())
-	set, err := util.NewClientSet(kubeConfig)
+	set, _, err := util.NewClientSet(kubeConfig, kubeContext)
 	if err != nil {
 		return err
 	}

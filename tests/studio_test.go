@@ -26,13 +26,24 @@ import (
 	"github.com/nebula-contrib/ngctl/pkg/util"
 )
 
+/*
+
+Assuming the Kubernetes cluster is created by Minikube with default settings:
+- The kubeconfig file is located at "~/.kube/config".
+- The context defined in ~/.kube/config is set to "minikube".
+
+Additionally, assuming the file example.yaml defines the Nebula cluster:
+- The Nebula cluster is named "nebula"
+
+*/
+
 func TestStudio(t *testing.T) {
 	var command = cmd.RootCmd
 	t.Run("studio install", func(t *testing.T) {
 		// consider test in local environment with kubeconfig file in default path ~/.kube/config
 		var namespace = "default"
 		var name = "studio-test"
-		set, err := util.NewClientSet(filepath.Join(homedir.HomeDir(), ".kube", "config"))
+		set, _, err := util.NewClientSet(filepath.Join(homedir.HomeDir(), ".kube", "config"), "")
 		if err != nil {
 			t.Errorf("create client set error: %v", err)
 		}
@@ -114,6 +125,24 @@ func TestList(t *testing.T) {
 	t.Run("list", func(t *testing.T) {
 		// run list command
 		command.SetArgs([]string{"list"})
+		err := command.Execute()
+		if err != nil {
+			t.Errorf("run list command error: %v", err)
+		}
+	})
+
+	t.Run("list -A", func(t *testing.T) {
+		// run list command with -A flag
+		command.SetArgs([]string{"list", "-A"})
+		err := command.Execute()
+		if err != nil {
+			t.Errorf("run list command error: %v", err)
+		}
+	})
+
+	t.Run("list --context", func(t *testing.T) {
+		// assume the context is "minikube"
+		command.SetArgs([]string{"list", "--context", "minikube"})
 		err := command.Execute()
 		if err != nil {
 			t.Errorf("run list command error: %v", err)

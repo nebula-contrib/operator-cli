@@ -73,7 +73,7 @@ func studioCmd() *cobra.Command {
 }
 
 func installStudio(name, namespace string, image string, nodePort int32) error {
-	clientSet, err := util.NewClientSet(kubeConfig)
+	clientSet, _, err := util.NewClientSet(kubeConfig, kubeContext)
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func installStudio(name, namespace string, image string, nodePort int32) error {
 }
 
 func uninstallStudio(name, namespace string) error {
-	clientSet, err := util.NewClientSet(kubeConfig)
+	clientSet, _, err := util.NewClientSet(kubeConfig, kubeContext)
 	if err != nil {
 		return err
 	}

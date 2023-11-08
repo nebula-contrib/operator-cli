@@ -47,7 +47,7 @@ func useCluster(args []string, namespace string) error {
 	}
 	name := args[0]
 
-	client, err := util.NewDynamicClient(kubeConfig)
+	client, _, err := util.NewDynamicClient(kubeConfig, kubeContext)
 	if err != nil {
 		return err
 	}

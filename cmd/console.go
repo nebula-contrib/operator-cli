@@ -22,7 +22,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/nebula-contrib/ngctl/pkg/config"
 	"github.com/nebula-contrib/ngctl/pkg/console"
@@ -70,11 +69,7 @@ func run(option console.Option, image string) error {
 
 	ctx := context.Background()
 
-	conf, err := clientcmd.BuildConfigFromFlags("", kubeConfig)
-	if err != nil {
-		return nil
-	}
-	clientSet, err := kubernetes.NewForConfig(conf)
+	clientSet, conf, err := util.NewClientSet(kubeConfig, kubeContext)
 	if err != nil {
 		return nil
 	}

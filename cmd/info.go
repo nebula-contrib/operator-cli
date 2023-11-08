@@ -55,7 +55,7 @@ func info() error {
 	}
 	namespace, name := conf.Namespace, conf.Name
 
-	client, err := util.NewDynamicClient(kubeConfig)
+	client, _, err := util.NewDynamicClient(kubeConfig, kubeContext)
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func info() error {
 	clusterInfo(cluster)
 	log.Println("Overview:")
 	componentInfo(cluster)
-	clientSet, err := util.NewClientSet(kubeConfig)
+	clientSet, _, err := util.NewClientSet(kubeConfig, kubeContext)
 	if err != nil {
 		return err
 	}

@@ -16,29 +16,44 @@ package util
 import (
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-func NewClientSet(kubeconfig string) (*kubernetes.Clientset, error) {
-	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+func newKubeConfig(kubeconfig string, context string) (*rest.Config, error) {
+	if context == "" {
+		return clientcmd.BuildConfigFromFlags("", kubeconfig)
+	}
+	// switch to the specified context
+	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+		&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeconfig},
+		&clientcmd.ConfigOverrides{
+			CurrentContext: context,
+		}).ClientConfig()
+}
+
+// NewClientSet creates a new kubernetes client set
+func NewClientSet(kubeconfig string, context string) (*kubernetes.Clientset, *rest.Config, error) {
+	config, err := newKubeConfig(kubeconfig, context)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	clientSet, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return clientSet, nil
+	return clientSet, config, nil
 }
 
-func NewDynamicClient(kubeConfig string) (*dynamic.DynamicClient, error) {
-	config, err := clientcmd.BuildConfigFromFlags("", kubeConfig)
+// NewDynamicClient creates a new dynamic client
+func NewDynamicClient(kubeConfig string, context string) (*dynamic.DynamicClient, *rest.Config, error) {
+	config, err := newKubeConfig(kubeConfig, context)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	client, err := dynamic.NewForConfig(config)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return client, nil
+	return client, config, nil
 }
