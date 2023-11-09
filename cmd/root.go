@@ -22,7 +22,8 @@ import (
 
 // Flag Values for RootCmd
 var (
-	kubeConfig string
+	kubeConfig  string
+	kubeContext string
 )
 
 var RootCmd = &cobra.Command{
@@ -33,6 +34,7 @@ var RootCmd = &cobra.Command{
 
 func init() {
 	RootCmd.PersistentFlags().StringVar(&kubeConfig, "kubeconfig", filepath.Join(homedir.HomeDir(), ".kube", "config"), "path of the kubernetes config file")
+	RootCmd.PersistentFlags().StringVar(&kubeContext, "context", "", "context of the kubernetes config file")
 	RootCmd.AddCommand(studioCmd())
 	RootCmd.AddCommand(versionCmd())
 	RootCmd.AddCommand(listCmd())

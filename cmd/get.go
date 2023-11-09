@@ -59,7 +59,7 @@ func get(args []string, allNamespaces bool) error {
 	}
 	kind := args[0]
 	ctx := context.Background()
-	client, err := util.NewClientSet(kubeConfig)
+	client, _, err := util.NewClientSet(kubeConfig, kubeContext)
 	if err != nil {
 		return err
 	}
